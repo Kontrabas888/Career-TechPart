@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Career-Techpart/static/css/main.3da16833.css",
+    "main.js": "/Career-Techpart/static/js/main.5deb07bc.js",
+    "static/media/Sasha.jpg": "/Career-Techpart/static/media/Sasha.3b2e06f5644405787af2.jpg",
+    "index.html": "/Career-Techpart/index.html",
+    "main.3da16833.css.map": "/Career-Techpart/static/css/main.3da16833.css.map",
+    "main.5deb07bc.js.map": "/Career-Techpart/static/js/main.5deb07bc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3da16833.css",
+    "static/js/main.5deb07bc.js"
+  ]
+}
