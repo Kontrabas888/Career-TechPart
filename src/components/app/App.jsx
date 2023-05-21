@@ -25,7 +25,7 @@ const App = () => {
         setIsAllLoaded(true);
       }
     } catch (error) {
-      throw new Error(error.message);
+      console.error('Failed to fetch contacts:', error);
     }
   };
 
@@ -38,75 +38,76 @@ const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-   const followUser = async (userId) => {
+  const followUser = async (userId) => {
     try {
-    const updatedUsers = users.map(user => {
-      if (user.id === userId) {
-        return { ...user, followed: true, followers: user.followers + 1 };
-      }
-      return user;
-    });
-    setUsers(updatedUsers);
+      const userToUpdate = users.find(user => user.id === userId);
+      const updatedUsers = users.map(user => {
+        if (user.id === userId) {
+          return { ...user, followed: true, followers: user.followers + 1 };
+        }
+        return user;
+      });
+      setUsers(updatedUsers);
 
-    await axios.put(`/users/${userId}`, {
-      followed: true,
-      followers: users.find(user => user.id === userId).followers + 1,
-    });
-  } catch (error) {
-      throw new Error(error.message);
-    }
-  };  
-
-const unfollowUser = async (userId) => {
-    try {
-    const updatedUsers = users.map(user => {
-      if (user.id === userId) {
-        return { ...user, followed: false, followers: user.followers - 1 };
-      }
-      return user;
-    });
-    setUsers(updatedUsers);
-
-    await axios.put(`/users/${userId}`, {
-      followed: false,
-      followers: users.find(user => user.id === userId).followers - 1,
-    });
+      await axios.put(`/users/${userId}`, {
+        followed: true,
+        followers: userToUpdate.followers + 1,
+      });
     } catch (error) {
-      throw new Error(error.message);
+      console.error('Failed to follow user:', error);
     }
   };
 
-return (
-  <div className={css.container}>
-    <div className={css.cardset}>
-    <Card
-      key="my-card"
-      user={{
-        id: "my-card",
-        avatar: sasha,
-        user: "Oleksandr",
-        tweets: 777,
-        followers: 100500,
+  const unfollowUser = async (userId) => {
+    try {
+      const userToUpdate = users.find(user => user.id === userId);
+      const updatedUsers = users.map(user => {
+        if (user.id === userId) {
+          return { ...user, followed: false, followers: user.followers - 1 };
+        }
+        return user;
+      });
+      setUsers(updatedUsers);
+
+      await axios.put(`/users/${userId}`, {
         followed: false,
-      }}
-      followUser={followUser}
-      unfollowUser={unfollowUser}
-    />
-      {users.map(user => (
-        <Card key={user.id} user={user} />
-      ))}
+        followers: userToUpdate.followers - 1,
+      });
+    } catch (error) {
+      console.error('Failed to unfollow user:', error);
+    }
+  };
+
+  return (
+    <div className={css.container}>
+      <div className={css.cardset}>
+        <Card
+          key="my-card"
+          user={{
+            id: 'my-card',
+            avatar: sasha,
+            user: 'Oleksandr',
+            tweets: 777,
+            followers: 100500,
+            followed: false,
+          }}
+          followUser={followUser}
+          unfollowUser={unfollowUser}
+        />
+        {users.map(user => (
+          <Card key={user.id} user={user} followUser={followUser} unfollowUser={unfollowUser} />
+        ))}
+      </div>
+
+      {!isAllLoaded && (
+        <button className={css.button} type="button" onClick={loadMore} disabled={isLoading}>
+          {isLoading ? 'Loading...' : 'Load More'}
+        </button>
+      )}
+
+      {isAllLoaded && <p className={css.message}>All cards are loaded!</p>}
     </div>
-
-    {!isAllLoaded && (
-      <button className={css.button} type="button" onClick={loadMore} disabled={isLoading}>
-        {isLoading ? 'Loading...' : 'Load More'}
-      </button>
-    )}
-
-    {isAllLoaded && <p className={css.message}>All cards are loaded!</p>}
-  </div>
-);
-}
+  );
+};
 
 export default App;
-
